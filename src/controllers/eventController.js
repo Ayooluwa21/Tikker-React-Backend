@@ -27,6 +27,19 @@ exports.createEvent = async (req, res) => {
     const organizerId = req.user && req.user.id;
     if (!organizerId) return res.status(401).json({ message: 'Not authenticated' });
 
+    // basic validation
+    if (!data.title || typeof data.title !== 'string' || !data.title.trim())
+      return res.status(400).json({ message: 'Title is required' });
+
+    if (data.ticketTypes) {
+      if (!Array.isArray(data.ticketTypes)) return res.status(400).json({ message: 'ticketTypes must be an array' });
+      for (const tt of data.ticketTypes) {
+        if (!tt.name || typeof tt.name !== 'string') return res.status(400).json({ message: 'Each ticket must have a name' });
+        if (typeof tt.price !== 'number' || tt.price < 0) return res.status(400).json({ message: 'Ticket price must be a non-negative number' });
+        if (typeof tt.quantity !== 'number' || tt.quantity < 0) return res.status(400).json({ message: 'Ticket quantity must be a non-negative number' });
+      }
+    }
+
     const event = new Event({ ...data, organizer: organizerId });
     await event.save();
     res.status(201).json(event);

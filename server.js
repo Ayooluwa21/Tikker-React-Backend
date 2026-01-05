@@ -16,6 +16,7 @@ app.use(express.json());
 app.use('/api/health', require('./src/routes/health'));
 app.use('/api/auth', require('./src/routes/auth'));
 app.use('/api/events', require('./src/routes/events'));
+app.use('/api/bookings', require('./src/routes/bookings'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
